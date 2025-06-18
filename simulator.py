@@ -224,6 +224,21 @@ def compare_hands(move1: List[Card], move2: List[Card]) -> int:
     return s1 - s2
 
 
+def generate_all_possible_moves() -> List[Optional[List[Card]]]:
+    all_cards = [Card(rank, suit) for rank in range(3, 15) for suit in Suit]
+    move_set = set()
+
+    # Try group sizes 1, 2, 3, and 5 (singles, pairs, triples, 5-card hands)
+    for k in [1, 2, 3, 5]:
+        for combo in combinations(all_cards, k):
+            move = list(combo)
+            if classify_hand(move)[0] != HandType.INVALID:
+                move_set.add(tuple(sorted((card.rank, card.suit.value) for card in move)))
+
+    # Add None for pass
+    move_set.add(None)
+    return [None if m is None else [Card(rank, Suit(suit)) for rank, suit in m] for m in move_set]
+
 
 if __name__ == "__main__":
     game = Big2Game()
